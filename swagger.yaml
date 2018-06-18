@@ -52,11 +52,11 @@ definitions:
   Permissions:
     type: "object"
     properties:
-      HRPermissions:
+      hrPermissions:
         $ref: "#/definitions/PermissionLevel"
-      StudentPermissions:
+      studentPermissions:
         $ref: "#/definitions/PermissionLevel"
-      FinancePermissions:
+      financePermissions:
         $ref: "#/definitions/PermissionLevel"
 
   PermissionsResult:
