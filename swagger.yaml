@@ -1,75 +1,89 @@
 swagger: '2.0'
+
 info:
-  title: Web API Skeleton
-  description: Skeleton for Dropwizard Web APIs
-  version: '0.0'
-  license:
-    name: GNU Affero General Public License Version 3
-    url: http://www.gnu.org/licenses/agpl-3.0.en.html
-externalDocs:
-  description: GitHub Repository
-  url: https://github.com/osu-mist/web-api-skeleton
-host: localhost
+  description: "This API retrieves CORE permissions information on different users."
+  version: "1.0"
+  title: "CORE Permissions API"
+
+tags:
+- name: "permissions"
+  description: "HR, Student, and Finance permissions (1-5)"
+
 schemes:
-  - http
-basePath: /api/v0
-consumes:
-  - text/plain
-produces:
-  - text/plain
+- "https"
+
 paths:
-  /:
+  /permissions/{osuID}:
+
     get:
-      summary: Get information
-      description: Build and runtime information about the application.
+      tags:
+      - "permissions"
+      summary: "Retrieve permissions for user by OSU ID"
+      operationId: "getPermissionsById"
+      produces:
+      - "application/json"
       parameters:
-        - $ref: '#/parameters/pretty'
+        - name: "osuID"
+          in: "path"
+          description: "OSU ID of person whose permissions will be retrieved"
+          required: true
+          type: "integer"
       responses:
         200:
-          description: Object containing information
+          description: "Permissions successfully retrieved"
           schema:
-            $ref: '#/definitions/Info'
-
-parameters:
-  pretty:
-    name: pretty
-    in: query
-    type: boolean
-    required: false
-    description: If true, JSON response will be pretty-printed
+            $ref: "#/definitions/PermissionsResult"
+        404:
+          description: "No user with this OSU ID found"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Error"
 
 definitions:
-  Info:
+
+  PermissionLevel:
+    type: "integer"
+    minimum: 1
+    maximum: 5
+
+  Permissions:
+    type: "object"
     properties:
-      name:
-        type: string
-        description: Name of the API.
-      time:
-        type: string
-        description: Build time in ISO 8601 format.
-      unixTime:
-        type: integer
-        description: Build time as milliseconds since the unix epoch.
-      commit:
-        type: string
-        description: Git commit hash of the revision which was built.
-      documentation:
-        type: string
-        description: Filename of the swagger specification for the API.
+      HRPermissions:
+        $ref: "#/definitions/PermissionLevel"
+      StudentPermissions:
+        $ref: "#/definitions/PermissionLevel"
+      FinancePermissions:
+        $ref: "#/definitions/PermissionLevel"
+
+  PermissionsResult:
+    type: "object"
+    properties:
+      links:
+        type: "object"
+      data:
+        type: "object"
+        properties:
+          id:
+            type: "integer"
+          type:
+            type: "string"
+          attributes:
+            $ref: "#/definitions/Permissions"
+
   Error:
+    type: "object"
     properties:
       status:
-        type: integer
-        description: HTTP status code.
+        type: "integer"
       developerMessage:
-        type: string
-        description: An error string aimed at developers.
-      userMesage:
-        type: string
-        description: An error string aimed at end users.
+        type: "string"
+      userMessage:
+        type: "string"
       code:
-        type: integer
-        description: Error code.
+        type: "integer"
       details:
-        type: string
-        description: A link to further information about the error.
+        type: "string"
