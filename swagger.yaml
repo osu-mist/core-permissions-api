@@ -12,29 +12,46 @@ tags:
 schemes:
 - "https"
 
-paths:
-  /permissions/{osuID}:
+host: "api.oregonstate.edu"
 
+basePath: "/v1"
+
+externalDocs:
+  description: "GitHub Repository"
+  url: "https://github.com/osu-mist/core-permissions-api"
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+paths:
+
+  /permissions:
     get:
       tags:
       - "permissions"
-      summary: "Retrieve permissions for user by OSU ID"
-      operationId: "getPermissionsById"
-      produces:
-      - "application/json"
+      summary: "Retrieve permissions for user by parameters"
+      operationId: "getPermissions"
       parameters:
         - name: "osuID"
-          in: "path"
+          in: "query"
           description: "OSU ID of person whose permissions will be retrieved"
-          required: true
+          required: false
+          type: "integer"
+        - name: "onid"
+          in: "query"
+          description: "ONID of person whose permissions will be retrieved"
+          required: false
           type: "integer"
       responses:
         200:
           description: "Permissions successfully retrieved"
           schema:
             $ref: "#/definitions/PermissionsResult"
-        404:
-          description: "No user with this OSU ID found"
+        400:
+          description: "Invalid syntax in parameters"
           schema:
             $ref: "#/definitions/Error"
         500:
@@ -59,11 +76,17 @@ definitions:
       financePermissions:
         $ref: "#/definitions/PermissionLevel"
 
+  SelfLink:
+    type: "object"
+    properties:
+      self:
+        type: "string"
+        format: "url"
+        description: "Self link of resource"
+
   PermissionsResult:
     type: "object"
     properties:
-      links:
-        type: "object"
       data:
         type: "object"
         properties:
@@ -71,21 +94,21 @@ definitions:
             type: "integer"
           type:
             type: "string"
+            example: "permissions"
           attributes:
             $ref: "#/definitions/Permissions"
           links:
-            type: "object"
+            $ref: "#/definitions/SelfLink"
 
   Error:
     type: "object"
     properties:
       status:
         type: "integer"
-      developerMessage:
-        type: "string"
-      userMessage:
-        type: "string"
+        description: "HTTP status code"
       code:
         type: "integer"
-      details:
+        description: "Specific error code"
+      detail:
         type: "string"
+        description: "Link to further information on error code"
