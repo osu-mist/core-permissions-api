@@ -7,18 +7,18 @@ This API retrieves CORE permissions information on different users. More informa
 ### /permissions/{osuID}
 
 #### GET
-This endpoint will return the HR, Student, and Finance permission levels of a person specified by their OSU ID. Each of these values will be an integer from 1 to 5.
+This endpoint will return the HR, Student, and Finance permission levels of a person specified by their OSU ID. Each of these values will be an integer from 0 to 5.
 
 ##### Example of response
 ```json
 {
   "data": {
-    "id": 123456789,
+    "id": "123456789",
     "type": "permissions",
     "attributes": {
       "HRPermissions": 4,
       "StudentPermissions": 3,
-      "FinancePermissions": 5
+      "FinancePermissions": 2
     },
     "links": {
       "self": "https://api.oregonstate.edu/v1/permissions/123456789"
@@ -37,12 +37,12 @@ This endpoint will return multiple permissions for users specified by parameters
 {
   "data": [
     {
-      "id": 123456789,
+      "id": "123456789",
       "type": "permissions",
       "attributes": {
        "HRPermissions": 4,
        "StudentPermissions": 3,
-       "FinancePermissions": 5
+       "FinancePermissions": 2
       },
       "links": {
        "self": "https://api.oregonstate.edu/v1/permissions/123456789"
