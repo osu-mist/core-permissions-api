@@ -135,7 +135,6 @@ definitions:
         data:
           $ref: "#/definitions/PermissionsResource"
 
-
   PermissionsResultArray:
     type: "object"
     properties:
