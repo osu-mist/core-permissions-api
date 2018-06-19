@@ -98,6 +98,10 @@ definitions:
   Permissions:
     type: "object"
     properties:
+      onid:
+        type: "string"
+        description: "ONID of person who permissions belong to"
+        example: "browni"
       hrPermissions:
         $ref: "#/definitions/PermissionLevel"
       studentPermissions:
