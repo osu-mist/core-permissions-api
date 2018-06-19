@@ -12,7 +12,6 @@ This endpoint will return the HR, Student, and Finance permission levels of a pe
 ##### Example of response
 ```json
 {
-  "links": {},
   "data": {
     "id": 123456789,
     "type": "permissions",
@@ -21,7 +20,34 @@ This endpoint will return the HR, Student, and Finance permission levels of a pe
       "StudentPermissions": 3,
       "FinancePermissions": 5
     },
-    "links": null
+    "links": {
+      "self": "https://api.oregonstate.edu/v1/permissions/123456789"
+    }
   }
+}
+```
+
+### /permissions
+
+#### GET
+This endpoint will return multiple permissions for users specified by parameters.
+
+#### Example of response
+```json
+{
+  "data": [
+    {
+      "id": 123456789,
+      "type": "permissions",
+      "attributes": {
+       "HRPermissions": 4,
+       "StudentPermissions": 3,
+       "FinancePermissions": 5
+      },
+      "links": {
+       "self": "https://api.oregonstate.edu/v1/permissions/123456789"
+      }
+    }
+  ]
 }
 ```
