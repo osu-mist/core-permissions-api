@@ -32,7 +32,7 @@ This endpoint will return the HR, Student, and Finance permission levels of a pe
 #### GET
 This endpoint will return multiple permissions for users specified by parameters.
 
-#### Example of response
+##### Example of response
 ```json
 {
   "data": [
