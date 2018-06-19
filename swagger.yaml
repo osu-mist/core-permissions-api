@@ -28,11 +28,38 @@ produces:
 
 paths:
 
+  /permissions/{osuID}:
+    get:
+      tags:
+      - "permissions"
+      summary: "Retrieve permissions for user by their OSU ID"
+      operationId: "getPermissionsById"
+      parameters:
+        - name: "osuID"
+          in: "path"
+          description: "OSU ID of person whose permissions will be retrieved"
+          required: true
+          type: "integer"
+
+      responses:
+        200:
+          description: "Permissions successfully retrieved"
+          schema:
+            $ref: "#/definitions/PermissionsResult"
+        404:
+          description: "No permissions found for this OSU ID"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Error"
+
   /permissions:
     get:
       tags:
       - "permissions"
-      summary: "Retrieve permissions for user by parameters"
+      summary: "Retrieve permissions for users by parameters"
       operationId: "getPermissions"
       parameters:
         - name: "osuID"
@@ -44,12 +71,12 @@ paths:
           in: "query"
           description: "ONID of person whose permissions will be retrieved"
           required: false
-          type: "integer"
+          type: "string"
       responses:
         200:
           description: "Permissions successfully retrieved"
           schema:
-            $ref: "#/definitions/PermissionsResult"
+            $ref: "#/definitions/PermissionsResultArray"
         400:
           description: "Invalid syntax in parameters"
           schema:
@@ -63,8 +90,10 @@ definitions:
 
   PermissionLevel:
     type: "integer"
-    minimum: 1
+    minimum: 0
     maximum: 5
+    description: "Permission level for a given category"
+    example: 3
 
   Permissions:
     type: "object"
@@ -83,22 +112,37 @@ definitions:
         type: "string"
         format: "url"
         description: "Self link of resource"
+        example: "https://api.oregonstate.edu/api/v1/permissions/123456789"
+
+  PermissionsResource:
+    type: "object"
+    properties:
+        id:
+          type: "integer"
+          description: "OSU ID of person who permissions belong to"
+          example: 123456789
+        type:
+          type: "string"
+          example: "permissions"
+        attributes:
+          $ref: "#/definitions/Permissions"
+        links:
+          $ref: "#/definitions/SelfLink"
 
   PermissionsResult:
     type: "object"
     properties:
+        data:
+          $ref: "#/definitions/PermissionsResource"
+
+
+  PermissionsResultArray:
+    type: "object"
+    properties:
       data:
-        type: "object"
-        properties:
-          id:
-            type: "integer"
-          type:
-            type: "string"
-            example: "permissions"
-          attributes:
-            $ref: "#/definitions/Permissions"
-          links:
-            $ref: "#/definitions/SelfLink"
+        type: "array"
+        items:
+          $ref: "#/definitions/PermissionsResource"
 
   Error:
     type: "object"
@@ -106,9 +150,12 @@ definitions:
       status:
         type: "integer"
         description: "HTTP status code"
+        example: 404
       code:
         type: "integer"
         description: "Specific error code"
+        example: 1400
       detail:
         type: "string"
         description: "Link to further information on error code"
+        example: "https://developer.oregonstate.edu/documentation/error-reference#1400"
