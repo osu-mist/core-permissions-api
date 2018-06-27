@@ -6,8 +6,9 @@ import edu.oregonstate.mist.api.jsonapi.ResultObject
 import edu.oregonstate.mist.permissionsapi.core.Permissions
 import edu.oregonstate.mist.permissionsapi.db.PermissionsDAO
 
-import io.dropwizard.jersey.params.IntParam
 import com.google.common.base.Optional
+import io.dropwizard.jersey.params.NonEmptyStringParam
+
 import javax.annotation.security.PermitAll
 import javax.ws.rs.GET
 import javax.ws.rs.Path
@@ -36,7 +37,7 @@ class PermissionsResource extends Resource {
      */
     @GET
     @Path("{osuID}")
-    Response getPermissionsById(@PathParam("osuID") IntParam osuID) {
+    Response getPermissionsById(@PathParam("osuID") NonEmptyStringParam osuID) {
         Permissions permissions = dao.getPermissionsById(osuID.get())
         if(!permissions) {
             return notFound().build()
@@ -53,8 +54,12 @@ class PermissionsResource extends Resource {
      * @return Response
      */
     @GET
-    Response getPermissions(@QueryParam("osuID") Optional<Integer> osuID,
+    Response getPermissions(@QueryParam("osuID") Optional<String> osuID,
                             @QueryParam("onid") Optional<String> onid) {
+        if(!(osuID.isPresent() ^ onid.isPresent())) {
+            return badRequest("Exactly one of [osuID, onid] must be used").build()
+        }
+
         List<Permissions> permissions = dao.getPermissions(osuID.orNull(), onid.or(""))
         ResultObject permissionsResult = permissionsResultObject(permissions)
         ok(permissionsResult).build()

@@ -6,7 +6,10 @@ import javax.validation.constraints.NotNull
 
 class Permissions {
     @JsonIgnore
-    int osuID
+    String osuID
+
+    @NotNull
+    String onid
 
     @NotNull
     int hrPermissionLevel

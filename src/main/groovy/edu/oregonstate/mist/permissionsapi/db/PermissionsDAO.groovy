@@ -20,7 +20,7 @@ interface PermissionsDAO extends Closeable {
         FROM CoreDataWarehouse.sys2sys.CoreUserSecurityDomainPermissionLevels_EcsApi_1_1_0
         WHERE OsuId = :id
     """)
-    Permissions getPermissionsById(@Bind("id") Integer id)
+    Permissions getPermissionsById(@Bind("id") String id)
 
     @SqlQuery("""
         SELECT OsuId,
@@ -33,7 +33,7 @@ interface PermissionsDAO extends Closeable {
         WHERE OsuId LIKE :id
         AND Onid LIKE :onid
     """)
-    List<Permissions> getPermissions(@Bind("id") Integer id,
+    List<Permissions> getPermissions(@Bind("id") String id,
                                      @Bind("onid") String onid)
 
     @Override
