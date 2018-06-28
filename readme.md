@@ -122,7 +122,7 @@ This endpoint will return the HR, Student, and Finance permission levels of a pe
       "FinancePermissions": 2
     },
     "links": {
-      "self": "https://api.oregonstate.edu/v1/permissions/123456789"
+      "self": "https://api.oregonstate.edu/v1/core-permissions/123456789"
     }
   }
 }
@@ -146,7 +146,7 @@ This endpoint will return multiple permissions for users specified by parameters
        "FinancePermissions": 2
       },
       "links": {
-       "self": "https://api.oregonstate.edu/v1/permissions/123456789"
+       "self": "https://api.oregonstate.edu/v1/core-permissions/123456789"
       }
     }
   ]
