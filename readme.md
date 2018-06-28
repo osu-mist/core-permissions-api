@@ -105,7 +105,7 @@ $ gradle run
 
 ## Endpoints
 
-### /permissions/{osuID}
+### /core-permissions/{osuID}
 
 #### GET
 This endpoint will return the HR, Student, and Finance permission levels of a person specified by their OSU ID. Each of these values will be an integer from 0 to 5.
@@ -128,7 +128,7 @@ This endpoint will return the HR, Student, and Finance permission levels of a pe
 }
 ```
 
-### /permissions
+### /core-permissions
 
 #### GET
 This endpoint will return multiple permissions for users specified by parameters.
