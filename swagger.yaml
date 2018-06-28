@@ -116,7 +116,7 @@ definitions:
         type: "string"
         format: "url"
         description: "Self link of resource"
-        example: "https://api.oregonstate.edu/v1/permissions/123456789"
+        example: "https://api.oregonstate.edu/v1/core-permissions/123456789"
 
   PermissionsResource:
     type: "object"
