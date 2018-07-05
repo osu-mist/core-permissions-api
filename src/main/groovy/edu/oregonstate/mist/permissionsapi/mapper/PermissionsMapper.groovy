@@ -9,10 +9,11 @@ import java.sql.SQLException
 class PermissionsMapper implements ResultSetMapper<Permissions> {
     Permissions map(int i, ResultSet rs, StatementContext sc) throws SQLException {
         new Permissions(
-                osuID: rs.getInt('OsuID'),
-                hrPermissionLevel: rs.getInt('HumanResourcesSecurityPermissionLevel'),
-                studentPermissionLevel: rs.getInt('StudentSecurityPermissionLevel'),
-                financialPermissionLevel: rs.getInt('FinanceSecurityPermissionLevel')
+                osuID: rs.getInt("OsuID"),
+                onid: rs.getString("Onid"),
+                hrPermissionLevel: rs.getInt("HumanResourcesSecurityPermissionLevel"),
+                studentPermissionLevel: rs.getInt("StudentSecurityPermissionLevel"),
+                financialPermissionLevel: rs.getInt("FinanceSecurityPermissionLevel")
         )
     }
 }

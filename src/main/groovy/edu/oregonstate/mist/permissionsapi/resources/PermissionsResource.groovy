@@ -7,7 +7,6 @@ import edu.oregonstate.mist.permissionsapi.core.Permissions
 import edu.oregonstate.mist.permissionsapi.db.PermissionsDAO
 
 import com.google.common.base.Optional
-import io.dropwizard.jersey.params.NonEmptyStringParam
 
 import javax.annotation.security.PermitAll
 import javax.ws.rs.GET
@@ -18,7 +17,7 @@ import javax.ws.rs.QueryParam
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
-@Path('/permissions')
+@Path("/core-permissions")
 @PermitAll
 @Produces(MediaType.APPLICATION_JSON)
 class PermissionsResource extends Resource {
@@ -37,8 +36,8 @@ class PermissionsResource extends Resource {
      */
     @GET
     @Path("{osuID}")
-    Response getPermissionsById(@PathParam("osuID") NonEmptyStringParam osuID) {
-        Permissions permissions = dao.getPermissionsById(osuID.get())
+    Response getPermissionsById(@PathParam("osuID") String osuID) {
+        Permissions permissions = dao.getPermissionsById(osuID)
         if(!permissions) {
             return notFound().build()
         }
@@ -60,7 +59,7 @@ class PermissionsResource extends Resource {
             return badRequest("Exactly one of [osuID, onid] must be used").build()
         }
 
-        List<Permissions> permissions = dao.getPermissions(osuID.orNull(), onid.or(""))
+        List<Permissions> permissions = dao.getPermissions(osuID.or(""), onid.or(""))
         ResultObject permissionsResult = permissionsResultObject(permissions)
         ok(permissionsResult).build()
     }
@@ -73,6 +72,7 @@ class PermissionsResource extends Resource {
      */
     ResourceObject permissionsResourceObject(Permissions permissions) {
         new ResourceObject(
+                id: permissions.osuID,
                 type: "permissions",
                 attributes: permissions,
                 links: null

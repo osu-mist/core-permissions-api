@@ -30,8 +30,8 @@ interface PermissionsDAO extends Closeable {
                FinanceSecurityPermissionLevel
                
         FROM CoreDataWarehouse.sys2sys.CoreUserSecurityDomainPermissionLevels_EcsApi_1_1_0
-        WHERE OsuId LIKE :id
-        AND Onid LIKE :onid
+        WHERE OsuId = :id
+        OR Onid = :onid
     """)
     List<Permissions> getPermissions(@Bind("id") String id,
                                      @Bind("onid") String onid)
