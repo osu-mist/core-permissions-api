@@ -22,12 +22,12 @@ class PermissionsApplication extends Application<PermissionsConfiguration> {
     void initialize(Bootstrap<PermissionsConfiguration> bootstrap) {}
 
     @Override
-    public void run(PermissionsConfiguration configuration, Environment environment) {
+    void run(PermissionsConfiguration configuration, Environment environment) {
         final DBIFactory FACTORY = new DBIFactory()
         final DBI JDBI = FACTORY.build(environment, configuration.getDataSourceFactory(), "jdbi")
         final PermissionsDAO DAO = JDBI.onDemand(PermissionsDAO.class)
 
-        environment.jersey().register(new PermissionsResource(DAO))
+        environment.jersey().register(new PermissionsResource(DAO, configuration.api.endpointUri))
 
         this.setup(configuration, environment)
     }
@@ -38,7 +38,7 @@ class PermissionsApplication extends Application<PermissionsConfiguration> {
      * @param arguments
      * @throws Exception
      */
-    public static void main(String[] arguments) throws Exception {
+    static void main(String[] arguments) throws Exception {
         new PermissionsApplication().run(arguments)
     }
 }

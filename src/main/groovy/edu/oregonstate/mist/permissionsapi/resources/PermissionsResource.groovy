@@ -1,12 +1,13 @@
 package edu.oregonstate.mist.permissionsapi.resources
 
+import com.google.common.base.Optional
+
 import edu.oregonstate.mist.api.Resource
 import edu.oregonstate.mist.api.jsonapi.ResourceObject
 import edu.oregonstate.mist.api.jsonapi.ResultObject
 import edu.oregonstate.mist.permissionsapi.core.Permissions
 import edu.oregonstate.mist.permissionsapi.db.PermissionsDAO
-
-import com.google.common.base.Optional
+import edu.oregonstate.mist.permissionsapi.PermissionsURIBuilder
 
 import javax.annotation.security.PermitAll
 import javax.ws.rs.GET
@@ -23,9 +24,13 @@ import javax.ws.rs.core.Response
 class PermissionsResource extends Resource {
 
     private final PermissionsDAO dao
+    private URI baseURI
+    private permissionsURIBuilder
 
-    PermissionsResource(PermissionsDAO dao) {
+    PermissionsResource(PermissionsDAO dao, URI baseURI) {
         this.dao = dao
+        this.baseURI = baseURI
+        this.permissionsURIBuilder = new PermissionsURIBuilder(baseURI)
     }
 
     /**
@@ -75,8 +80,7 @@ class PermissionsResource extends Resource {
                 id: permissions.osuID,
                 type: "permissions",
                 attributes: permissions,
-                links: null
-                // TODO: Add self link
+                links: ["self": permissionsURIBuilder.permissionsURI(permissions.osuID)]
         )
     }
 
@@ -87,7 +91,7 @@ class PermissionsResource extends Resource {
      * @return ResultObject
      */
     ResultObject permissionsResultObject(Permissions permissions) {
-        new ResultObject(data: permissionsResourceObject(permissions))
+        new ResultObject(data: permissionsResourceObject(permissions), links:null)
     }
 
     /**
@@ -98,6 +102,6 @@ class PermissionsResource extends Resource {
      * @return ResultObject
      */
     ResultObject permissionsResultObject(List<Permissions> permissions) {
-        new ResultObject(data: permissions.collect { permissionsResourceObject(it) })
+        new ResultObject(data: permissions.collect { permissionsResourceObject(it) }, links:null)
     }
 }
