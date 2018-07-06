@@ -13,12 +13,12 @@ class PermissionsURIBuilder {
     /**
      * Builds a URI for a self link to a permissions object
      *
-     * @param osuID
+     * @param id
      * @return URI of self link to permissions object
      */
-    URI permissionsURI(String osuID) {
+    URI permissionsURI(String id) {
         UriBuilder.fromUri(this.baseURI)
-                  .path("core-permissions/{osuID}")
-                  .build(osuID)
+                  .path("core-permissions/{id}")
+                  .build(id)
     }
 }

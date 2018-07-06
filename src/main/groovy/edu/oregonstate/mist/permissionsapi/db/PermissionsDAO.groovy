@@ -19,22 +19,10 @@ interface PermissionsDAO extends Closeable {
                
         FROM CoreDataWarehouse.sys2sys.CoreUserSecurityDomainPermissionLevels_EcsApi_1_1_0
         WHERE OsuId = :id
+        OR Onid = :username
     """)
-    Permissions getPermissionsById(@Bind("id") String id)
-
-    @SqlQuery("""
-        SELECT OsuId,
-               Onid,
-               HumanResourcesSecurityPermissionLevel,
-               StudentSecurityPermissionLevel,
-               FinanceSecurityPermissionLevel
-               
-        FROM CoreDataWarehouse.sys2sys.CoreUserSecurityDomainPermissionLevels_EcsApi_1_1_0
-        WHERE OsuId = :id
-        OR Onid = :onid
-    """)
-    List<Permissions> getPermissions(@Bind("id") String id,
-                                     @Bind("onid") String onid)
+    Permissions getPermissions(@Bind("id") String id,
+                               @Bind("username") String username)
 
     @Override
     void close()

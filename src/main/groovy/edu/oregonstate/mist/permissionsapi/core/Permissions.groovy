@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 
 class Permissions {
     @JsonIgnore
-    String osuID
+    String id
 
-    String onid
+    String username
 
     int hrPermissionLevel
 

@@ -36,14 +36,14 @@ class PermissionsResource extends Resource {
     /**
      * Endpoint for retrieving permissions by OSU ID
      *
-     * @param osuID
+     * @param id
      * @return Response
      */
     @GET
-    @Path("{osuID}")
-    Response getPermissionsById(@PathParam("osuID") String osuID) {
-        Permissions permissions = dao.getPermissionsById(osuID)
-        if(!permissions) {
+    @Path("{id}")
+    Response getPermissionsById(@PathParam("id") String id) {
+        Permissions permissions = dao.getPermissions(id, "")
+        if (!permissions) {
             return notFound().build()
         }
         ResultObject permissionsResult = permissionsResultObject(permissions)
@@ -53,18 +53,21 @@ class PermissionsResource extends Resource {
     /**
      * Endpoint for retrieving permissions by parameters
      *
-     * @param osuID
-     * @param onid
+     * @param id
+     * @param username
      * @return Response
      */
     @GET
-    Response getPermissions(@QueryParam("osuID") Optional<String> osuID,
-                            @QueryParam("onid") Optional<String> onid) {
-        if(!(osuID.isPresent() ^ onid.isPresent())) {
-            return badRequest("Exactly one of [osuID, onid] must be used").build()
+    Response getPermissions(@QueryParam("id") Optional<String> id,
+                            @QueryParam("username") Optional<String> username) {
+        if (!(id.isPresent() ^ username.isPresent())) {
+            return badRequest("Exactly one of [id, username] must be used").build()
         }
 
-        List<Permissions> permissions = dao.getPermissions(osuID.or(""), onid.or(""))
+        Permissions permissions = dao.getPermissions(id.or(""), username.or(""))
+        if (!permissions) {
+            return notFound().build()
+        }
         ResultObject permissionsResult = permissionsResultObject(permissions)
         ok(permissionsResult).build()
     }
@@ -77,10 +80,10 @@ class PermissionsResource extends Resource {
      */
     ResourceObject permissionsResourceObject(Permissions permissions) {
         new ResourceObject(
-                id: permissions.osuID,
+                id: permissions.id,
                 type: "permissions",
                 attributes: permissions,
-                links: ["self": permissionsURIBuilder.permissionsURI(permissions.osuID)]
+                links: ["self": permissionsURIBuilder.permissionsURI(permissions.id)]
         )
     }
 
@@ -91,17 +94,6 @@ class PermissionsResource extends Resource {
      * @return ResultObject
      */
     ResultObject permissionsResultObject(Permissions permissions) {
-        new ResultObject(data: permissionsResourceObject(permissions), links:null)
-    }
-
-    /**
-     * Builds JSON API ResultObject with list of ResourceObjects using
-     *      a list of permissions objects
-     *
-     * @param permissions
-     * @return ResultObject
-     */
-    ResultObject permissionsResultObject(List<Permissions> permissions) {
-        new ResultObject(data: permissions.collect { permissionsResourceObject(it) }, links:null)
+        new ResultObject(data: permissionsResourceObject(permissions), links: null)
     }
 }
