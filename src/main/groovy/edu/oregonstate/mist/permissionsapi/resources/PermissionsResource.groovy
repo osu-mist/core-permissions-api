@@ -65,10 +65,15 @@ class PermissionsResource extends Resource {
         }
 
         Permissions permissions = dao.getPermissions(id.or(""), username.or(""))
-        if (!permissions) {
-            return notFound().build()
+        ResultObject permissionsResult
+        if (permissions) {
+            permissionsResult = permissionsResultObject(permissions)
+        } else {
+            permissionsResult = new ResultObject(
+                    data: null,
+                    links: null
+            )
         }
-        ResultObject permissionsResult = permissionsResultObject(permissions)
         ok(permissionsResult).build()
     }
 
