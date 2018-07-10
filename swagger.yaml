@@ -28,14 +28,14 @@ produces:
 
 paths:
 
-  /core-permissions/{osuID}:
+  /core-permissions/{id}:
     get:
       tags:
       - "permissions"
       summary: "Retrieve permissions for user by their OSU ID"
       operationId: "getPermissionsById"
       parameters:
-        - name: "osuID"
+        - name: "id"
           in: "path"
           description: "OSU ID of person whose permissions will be retrieved"
           required: true
@@ -59,15 +59,15 @@ paths:
     get:
       tags:
       - "permissions"
-      summary: "Retrieve permissions for users by parameters"
+      summary: "Retrieve permissions for user by parameters"
       operationId: "getPermissions"
       parameters:
-        - name: "osuID"
+        - name: "id"
           in: "query"
           description: "OSU ID of person whose permissions will be retrieved"
           required: false
           type: "string"
-        - name: "onid"
+        - name: "username"
           in: "query"
           description: "ONID of person whose permissions will be retrieved"
           required: false
@@ -76,7 +76,7 @@ paths:
         200:
           description: "Permissions successfully retrieved"
           schema:
-            $ref: "#/definitions/PermissionsResultArray"
+            $ref: "#/definitions/PermissionsResult"
         400:
           description: "Bad request"
           schema:
@@ -88,26 +88,31 @@ paths:
 
 definitions:
 
-  PermissionLevel:
-    type: "integer"
-    minimum: 0
-    maximum: 5
-    description: "Permission level for a given category"
-    example: 3
-
   Permissions:
     type: "object"
     properties:
-      onid:
+      username:
         type: "string"
         description: "ONID of person who permissions belong to"
         example: "browni"
       hrPermissions:
-        $ref: "#/definitions/PermissionLevel"
+        type: "integer"
+        minimum: 0
+        maximum: 5
+        description: "HR permission level"
+        example: 1
       studentPermissions:
-        $ref: "#/definitions/PermissionLevel"
+        type: "integer"
+        minimum: 0
+        maximum: 5
+        description: "Student permission level"
+        example: 2
       financePermissions:
-        $ref: "#/definitions/PermissionLevel"
+        type: "integer"
+        minimum: 0
+        maximum: 4
+        description: "Finance permission level"
+        example: 3
 
   SelfLink:
     type: "object"
@@ -137,14 +142,6 @@ definitions:
     type: "object"
     properties:
         data:
-          $ref: "#/definitions/PermissionsResource"
-
-  PermissionsResultArray:
-    type: "object"
-    properties:
-      data:
-        type: "array"
-        items:
           $ref: "#/definitions/PermissionsResource"
 
   Error:
