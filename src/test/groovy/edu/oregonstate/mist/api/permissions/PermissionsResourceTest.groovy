@@ -23,11 +23,7 @@ class PermissionsResourceTest {
     // Test getPermissions
     @Test
     void testGetPermissions() {
-        def mockDao = new MockFor(PermissionsDAO)
-        mockDao.demand.getPermissions (0..4)
-                { String id, String username -> permissions }
-        def dao = mockDao.proxyInstance()
-        PermissionsResource resource = new PermissionsResource(dao, baseURI)
+        PermissionsResource resource = createMockResource(true)
 
         Optional.with {
             // Valid request using id
@@ -53,11 +49,7 @@ class PermissionsResourceTest {
     // Valid id
     @Test
     void testValidId() {
-        def mockDao = new MockFor(PermissionsDAO)
-        mockDao.demand.getPermissions (0..1)
-                { String id, String username -> permissions }
-        def dao = mockDao.proxyInstance()
-        PermissionsResource resource = new PermissionsResource(dao, baseURI)
+        PermissionsResource resource = createMockResource(true)
 
         def validId = resource.getPermissionsById(id)
         validateResponse(validId, 200, null)
@@ -66,18 +58,26 @@ class PermissionsResourceTest {
     // Invalid id
     @Test
     void testInvalidId() {
-        def mockDao = new MockFor(PermissionsDAO)
-        mockDao.demand.getPermissions (0..1)
-                { String id, String username -> }
-        def dao = mockDao.proxyInstance()
-        PermissionsResource resource = new PermissionsResource(dao, baseURI)
+        PermissionsResource resource = createMockResource(false)
 
         def invalidId = resource.getPermissionsById(id)
         validateResponse(invalidId, 404, null)
     }
 
-    void validateResponse(def response, Integer status, String message) {
+    PermissionsResource createMockResource(boolean validResponse) {
+        def mockDao = new MockFor(PermissionsDAO)
+        if(validResponse) {
+            mockDao.demand.getPermissions (0..4)
+                    { String id, String username -> permissions }
+        } else {
+            mockDao.demand.getPermissions (0..4)
+                    { String id, String username -> }
+        }
+        def dao = mockDao.proxyInstance()
+        PermissionsResource resource = new PermissionsResource(dao, baseURI)
+    }
 
+    void validateResponse(def response, Integer status, String message) {
         if(status) {
             assert response.status == status
         }

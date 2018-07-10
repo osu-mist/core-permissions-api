@@ -46,7 +46,7 @@ dependencies {
     compile "de.thomaskrille:dropwizard-template-config:1.4.0"
     compile "io.dropwizard:dropwizard-jdbi:${dropwizardVersion}"
     compile ":ojdbc8:"
-    compile ":jtds-1.3.1:"
+    compile "net.sourceforge.jtds:jtds:1.3.1"
 }
 
 codenarc {
