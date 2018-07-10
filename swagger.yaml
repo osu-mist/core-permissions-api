@@ -1,75 +1,164 @@
 swagger: '2.0'
+
 info:
-  title: Web API Skeleton
-  description: Skeleton for Dropwizard Web APIs
-  version: '0.0'
-  license:
-    name: GNU Affero General Public License Version 3
-    url: http://www.gnu.org/licenses/agpl-3.0.en.html
-externalDocs:
-  description: GitHub Repository
-  url: https://github.com/osu-mist/web-api-skeleton
-host: localhost
+  description: "This API retrieves CORE permissions information on different users."
+  version: "1.0"
+  title: "CORE Permissions API"
+
+tags:
+- name: "permissions"
+  description: "HR, Student, and Finance permissions (1-5)"
+
 schemes:
-  - http
-basePath: /api/v0
+- "https"
+
+host: "api.oregonstate.edu"
+
+basePath: "/v1"
+
+externalDocs:
+  description: "GitHub Repository"
+  url: "https://github.com/osu-mist/core-permissions-api"
+
 consumes:
-  - text/plain
+  - "application/json"
+
 produces:
-  - text/plain
+  - "application/json"
+
 paths:
-  /:
+
+  /core-permissions/{osuID}:
     get:
-      summary: Get information
-      description: Build and runtime information about the application.
+      tags:
+      - "permissions"
+      summary: "Retrieve permissions for user by their OSU ID"
+      operationId: "getPermissionsById"
       parameters:
-        - $ref: '#/parameters/pretty'
+        - name: "osuID"
+          in: "path"
+          description: "OSU ID of person whose permissions will be retrieved"
+          required: true
+          type: "string"
+
       responses:
         200:
-          description: Object containing information
+          description: "Permissions successfully retrieved"
           schema:
-            $ref: '#/definitions/Info'
+            $ref: "#/definitions/PermissionsResult"
+        404:
+          description: "No permissions found for this OSU ID"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Error"
 
-parameters:
-  pretty:
-    name: pretty
-    in: query
-    type: boolean
-    required: false
-    description: If true, JSON response will be pretty-printed
+  /core-permissions:
+    get:
+      tags:
+      - "permissions"
+      summary: "Retrieve permissions for users by parameters"
+      operationId: "getPermissions"
+      parameters:
+        - name: "osuID"
+          in: "query"
+          description: "OSU ID of person whose permissions will be retrieved"
+          required: false
+          type: "string"
+        - name: "onid"
+          in: "query"
+          description: "ONID of person whose permissions will be retrieved"
+          required: false
+          type: "string"
+      responses:
+        200:
+          description: "Permissions successfully retrieved"
+          schema:
+            $ref: "#/definitions/PermissionsResultArray"
+        400:
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Error"
 
 definitions:
-  Info:
+
+  PermissionLevel:
+    type: "integer"
+    minimum: 0
+    maximum: 5
+    description: "Permission level for a given category"
+    example: 3
+
+  Permissions:
+    type: "object"
     properties:
-      name:
-        type: string
-        description: Name of the API.
-      time:
-        type: string
-        description: Build time in ISO 8601 format.
-      unixTime:
-        type: integer
-        description: Build time as milliseconds since the unix epoch.
-      commit:
-        type: string
-        description: Git commit hash of the revision which was built.
-      documentation:
-        type: string
-        description: Filename of the swagger specification for the API.
+      onid:
+        type: "string"
+        description: "ONID of person who permissions belong to"
+        example: "browni"
+      hrPermissions:
+        $ref: "#/definitions/PermissionLevel"
+      studentPermissions:
+        $ref: "#/definitions/PermissionLevel"
+      financePermissions:
+        $ref: "#/definitions/PermissionLevel"
+
+  SelfLink:
+    type: "object"
+    properties:
+      self:
+        type: "string"
+        format: "url"
+        description: "Self link of resource"
+        example: "https://api.oregonstate.edu/v1/core-permissions/123456789"
+
+  PermissionsResource:
+    type: "object"
+    properties:
+        id:
+          type: "string"
+          description: "OSU ID of person who permissions belong to"
+          example: "123456789"
+        type:
+          type: "string"
+          example: "permissions"
+        attributes:
+          $ref: "#/definitions/Permissions"
+        links:
+          $ref: "#/definitions/SelfLink"
+
+  PermissionsResult:
+    type: "object"
+    properties:
+        data:
+          $ref: "#/definitions/PermissionsResource"
+
+  PermissionsResultArray:
+    type: "object"
+    properties:
+      data:
+        type: "array"
+        items:
+          $ref: "#/definitions/PermissionsResource"
+
   Error:
+    type: "object"
     properties:
       status:
-        type: integer
-        description: HTTP status code.
-      developerMessage:
-        type: string
-        description: An error string aimed at developers.
-      userMesage:
-        type: string
-        description: An error string aimed at end users.
+        type: "integer"
+        description: "HTTP status code"
+        example: 123
       code:
-        type: integer
-        description: Error code.
-      details:
-        type: string
-        description: A link to further information about the error.
+        type: "integer"
+        description: "Specific error code"
+        example: 1400
+      detail:
+        type: "string"
+        description: "Link to further information on error code"
+        example: "https://developer.oregonstate.edu/documentation/error-reference#1400"
