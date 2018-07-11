@@ -110,13 +110,19 @@ $ gradle run
 #### GET
 This endpoint will return the HR, Student, and Finance permission levels of a person specified by their OSU ID. Each of these values will be an integer from 0 to 5.
 
-##### Example of response
+### /core-permissions
+
+#### GET
+This endpoint will return permissions for a user specified by parameters.
+
+## Example response
 ```json
 {
   "data": {
     "id": "123456789",
     "type": "permissions",
     "attributes": {
+      "username": "browni",
       "HRPermissions": 4,
       "StudentPermissions": 3,
       "FinancePermissions": 2
@@ -125,30 +131,5 @@ This endpoint will return the HR, Student, and Finance permission levels of a pe
       "self": "https://api.oregonstate.edu/v1/core-permissions/123456789"
     }
   }
-}
-```
-
-### /core-permissions
-
-#### GET
-This endpoint will return multiple permissions for users specified by parameters.
-
-##### Example of response
-```json
-{
-  "data": [
-    {
-      "id": "123456789",
-      "type": "permissions",
-      "attributes": {
-       "HRPermissions": 4,
-       "StudentPermissions": 3,
-       "FinancePermissions": 2
-      },
-      "links": {
-       "self": "https://api.oregonstate.edu/v1/core-permissions/123456789"
-      }
-    }
-  ]
 }
 ```
