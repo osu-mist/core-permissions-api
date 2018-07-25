@@ -30,6 +30,12 @@
                     </div>
                 </form>
             </div>
+
+            {% if not responded %}
+            <div class="alert alert-danger">
+                <strong>Error: </strong>Server not found
+            </div>
+            {% endif %}
         
             {% if queried %}
             {% if data %}
