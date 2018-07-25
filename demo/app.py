@@ -30,21 +30,20 @@ def base():
 
 
 def get_permissions_data(form):
-    if form["osuID"]:
-        res = session.get(
+    # Try ONID
+    res = session.get(
             url="{}/core-permissions".format(app.config["API_URL"]),
-            params={"id": form["osuID"]}
+            params={"username": form["search"]}
         )
-        return res.json()["data"]
-    elif form["onid"]:
-        res = session.get(
-            url="{}/core-permissions".format(app.config["API_URL"]),
-            params={"username": form["onid"]}
-        )
-        return res.json()["data"]
-    else:
-        return None
     assert res.status_code == 200
+    if not res.json()["data"]:
+        # Try ID
+        res = session.get(
+                url="{}/core-permissions".format(app.config["API_URL"]),
+                params={"id": form["search"]}
+            )
+        assert res.status_code == 200
+    # Return data even if empty
     return res.json()["data"]
 
 global session
