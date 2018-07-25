@@ -1,8 +1,6 @@
 import requests
 import json
-from flask import Flask
-from flask import request
-from flask import render_template
+from flask import Flask, request, render_template
 from requests.exceptions import ConnectionError
 
 
@@ -22,11 +20,6 @@ def init_session():
 
 @app.route("/", methods=["GET", "POST"])
 def base():
-    try:
-        session.get(app.config["API_URL"])
-    except ConnectionError:
-        return render_template("index.html", data=None, queried=None,
-                               responded=False)
     queried = False
     data = None
     if request.method == "POST":
@@ -34,6 +27,12 @@ def base():
         data = get_permissions_data(request.form)
     return render_template("index.html", data=data, queried=queried,
                            responded=True)
+
+
+@app.errorhandler(ConnectionError)
+def handle_connection_error(e):
+    return render_template("index.html", data=None, queried=None,
+                           responded=False)
 
 
 def get_permissions_data(form):
@@ -52,6 +51,7 @@ def get_permissions_data(form):
         assert res.status_code == 200
     # Return data even if empty
     return res.json()["data"]
+
 
 global session
 init_session()
