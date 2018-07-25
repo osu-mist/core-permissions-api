@@ -1,6 +1,8 @@
 import requests
+import json
 from flask import Flask
 from flask import request
+from flask import render_template
 
 
 app = Flask(__name__)
@@ -14,28 +16,34 @@ def init_session():
         app.config["AUTH_USERNAME"],
         app.config["AUTH_PASSWORD"]
     )
+    session.verify = False
 
 
-@app.route("/", methods=["GET"])
+@app.route("/", methods=["GET", "POST"])
 def base():
-    permissions_data = get_permissions_data()
-    return render_template
+    queried = False
+    data = None
+    if request.method == "POST":
+        queried = True
+        data = get_permissions_data(request.form)
+    return render_template("index.html", data=data, queried=queried)
 
 
 def get_permissions_data(form):
     if form["osuID"]:
-        res = requests.get(
+        res = session.get(
             url="{}/core-permissions".format(app.config["API_URL"]),
-            id=form["osuID"]
+            params={"id": form["osuID"]}
         )
+        return res.json()
     elif form["onid"]:
-        res = requests.get(
+        res = session.get(
             url="{}/core-permissions".format(app.config["API_URL"]),
-            username=form["onid"]
+            params={"username": form["onid"]}
         )
+        return res.json()["data"]
     else:
-        return []
-
+        return None
     assert res.status_code == 200
     return res.json()["data"]
 

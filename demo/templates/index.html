@@ -2,6 +2,8 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
         <title>Core Permissions API Demo</title>
     </head>
     <body>
@@ -10,14 +12,38 @@
             <a id="site-title"><h1>Core Permissions API Demo</h1></a>
         </header>
 
-        <input name="osuID" type="number" placeholder="9 digit OSU ID">
-        <input name="onid" type="text" placeholder="ONID username">
-        <button type="search-button">Search</button>
+        <form action="{{ url_for("base") }}", method="post">
+            <input name="osuID" type="number" placeholder="9 digit OSU ID">
+            <input name="onid" type="text" placeholder="ONID username">
+            <input type="submit" value="Search">
+        </form>
 
+        {% if queried %}
+        {% if data %}
         <div id="results-table">
-            {% if data %}
+            <table>
+                <tr>
+                    <th>OSU ID</th>
+                    <th>ONID</th>
+                    <th>HR Permissions</th>
+                    <th>Student Permissions</th>
+                    <th>Finance Permissions</th>
+                </tr>
+                <tr>
+                    <th>{{ data["id"] }}</th>
+                    <th>{{ data["attributes"]["username"] }}</th>
+                    <th>{{ data["attributes"]["hrPermissionLevel"] }}</th>
+                    <th>{{ data["attributes"]["studentPermissionLevel"] }}</th>
+                    <th>{{ data["attributes"]["financialPermissionLevel"] }}</th>
+                </tr>
+            </table>
         </div>
-
+        {% else %}
+        <div id="not-found">
+            No credentials were found for search
+        </div>
+        {% endif %}
+        {% endif %}
 
     </body>
 </html>
