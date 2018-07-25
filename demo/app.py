@@ -35,7 +35,7 @@ def get_permissions_data(form):
             url="{}/core-permissions".format(app.config["API_URL"]),
             params={"id": form["osuID"]}
         )
-        return res.json()
+        return res.json()["data"]
     elif form["onid"]:
         res = session.get(
             url="{}/core-permissions".format(app.config["API_URL"]),
