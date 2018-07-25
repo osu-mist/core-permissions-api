@@ -95,19 +95,19 @@ definitions:
         type: "string"
         description: "ONID of person who permissions belong to"
         example: "browni"
-      hrPermissions:
+      hrPermissionLevel:
         type: "integer"
         minimum: 0
         maximum: 5
         description: "HR permission level"
         example: 1
-      studentPermissions:
+      studentPermissionLevel:
         type: "integer"
         minimum: 0
         maximum: 5
         description: "Student permission level"
         example: 2
-      financePermissions:
+      financialPermissionLevel:
         type: "integer"
         minimum: 0
         maximum: 4
