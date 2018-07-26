@@ -1,5 +1,6 @@
-import requests
 import json
+import re
+import requests
 from flask import Flask, request, render_template
 from requests.exceptions import ConnectionError
 
@@ -20,38 +21,48 @@ def init_session():
 
 @app.route("/", methods=["GET", "POST"])
 def base():
-    queried = False
-    data = None
     if request.method == "POST":
-        queried = True
-        data = get_permissions_data(request.form)
-    return render_template("index.html", data=data, queried=queried,
-                           responded=True)
+        return get_response(request.form["search"])
+    else:
+        return render_template("index.html")
 
 
 @app.errorhandler(ConnectionError)
 def handle_connection_error(e):
-    return render_template("index.html", data=None, queried=None,
-                           responded=False)
+    return render_template("index.html", alert="connection-error.html")
 
 
-def get_permissions_data(form):
+@app.errorhandler(AssertionError)
+def handle_internal_server_error(e):
+    return render_template("index.html", alert="server-error.html")
+
+
+def get_response(query):
     # Try ONID
-    res = session.get(
+    if onid_regex.match(query):
+        res = session.get(
             url="{}/core-permissions".format(app.config["API_URL"]),
-            params={"username": form["search"]}
+            params={"username": query}
         )
-    assert res.status_code == 200
-    if not res.json()["data"]:
-        # Try ID
+        assert res.status_code == 200
+    # Try ID
+    elif osuID_regex.match(query):
         res = session.get(
                 url="{}/core-permissions".format(app.config["API_URL"]),
-                params={"id": form["search"]}
+                params={"id": query}
             )
         assert res.status_code == 200
-    # Return data even if empty
-    return res.json()["data"]
+    # Otherwise, input is invalid
+    else:
+        return render_template("index.html", alert="invalid-input.html")
+
+    data = res.json()["data"]
+    if data:
+        return render_template("index.html", data=data)
+    else:
+        return render_template("index.html", alert="no-credentials.html")
 
 
-global session
+onid_regex = re.compile("[a-zA-Z]")
+osuID_regex = re.compile("\d{9}")
 init_session()
