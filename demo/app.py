@@ -66,3 +66,6 @@ def get_response(query):
 onid_regex = re.compile("[a-zA-Z]")
 osuID_regex = re.compile("\d{9}")
 init_session()
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0")
