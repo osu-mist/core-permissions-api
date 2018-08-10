@@ -31,7 +31,7 @@ def base():
     elif "user" not in session:
         return redirect(cas_url + "/login?service=" + self_url)
     if session["user"] not in authorized_users:
-        return render_template("index.html", unauthorized=True)
+        return render_template("index.html", unauthorized=True), 403
     else:
         return render_template("index.html")
 
