@@ -18,6 +18,14 @@
             <h1>Core Permissions API Demo</h1>
         </a>
 
+        {% if unauthorized %}
+        {% include "unauthorized.html" %}
+        {% else %}
+        <div class="logout-button">
+            <form action="{{ url_for("logout") }}">
+                <button type="submit", class="btn-primary">Logout</button>
+            </form>
+        </div>
         <section class="content">
             <p>Search for a user by either their 9-digit OSU ID (ex: 123456789) or their ONID (ex: smithj)</p>
         
@@ -61,5 +69,6 @@
             </div>
             {% endif %}
         </section>
+        {% endif %}
     </body>
 </html>
