@@ -146,7 +146,7 @@ def get_oauth2_headers():
     res = requests.post(app.config["TOKEN_API_URL"], data=data)
     if token not in res.json():
         sys.exit("Error: invalid OAUTH2 credentials")
-    return {"Authorization:": "Bearer {}".format(res.json()[token])}
+    return {"Authorization": "Bearer {}".format(res.json()[token])}
 
 
 onid_regex = re.compile("[a-zA-Z]")
