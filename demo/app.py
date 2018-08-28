@@ -1,11 +1,10 @@
-import json
 import re
-import requests
 import sys
 import xml.etree.ElementTree as elementTree
+
+import requests
 from flask import Flask, request, render_template, redirect, session
 from requests.exceptions import ConnectionError
-
 
 app = Flask(__name__)
 app.config.from_pyfile("configuration.py")
@@ -105,14 +104,16 @@ def get_response(query):
             url="{}/core-permissions".format(app.config["API_URL"]),
             params={"username": query}
         )
-        assert res.status_code == 200
+        if token_needs_refresh(res):
+            return get_response(query)
     # Try ID
     elif osuID_regex.match(query):
         res = py_session.get(
                 url="{}/core-permissions".format(app.config["API_URL"]),
                 params={"id": query}
             )
-        assert res.status_code == 200
+        if token_needs_refresh(res):
+            return get_response(query)
     # Otherwise, input is invalid
     else:
         return render_template("index.html", alert="invalid-input.html")
@@ -122,6 +123,19 @@ def get_response(query):
         return render_template("index.html", data=data)
     else:
         return render_template("index.html", alert="no-credentials.html")
+
+
+def token_needs_refresh(res):
+    if res.status_code == 401:
+        get_oauth2_headers()
+        retry_res = py_session.get(
+            url=app.config["API_URL"]
+        )
+        assert retry_res.status_code == 200
+        return True
+    else:
+        assert res.status_code == 200
+        return False
 
 
 def init_py_session():
