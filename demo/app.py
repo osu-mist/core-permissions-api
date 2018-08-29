@@ -127,7 +127,7 @@ def get_response(query):
 
 def token_needs_refresh(res):
     if res.status_code == 401:
-        get_oauth2_headers()
+        py_session.headers = get_oauth2_headers()
         retry_res = py_session.get(
             url=app.config["API_URL"]
         )
