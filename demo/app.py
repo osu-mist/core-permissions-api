@@ -127,11 +127,13 @@ def get_response(query):
 
 def token_needs_refresh(res):
     if res.status_code == 401:
-        get_oauth2_headers()
+        py_session.headers = get_oauth2_headers()
         retry_res = py_session.get(
-            url=app.config["API_URL"]
+            url="{}/core-permissions".format(app.config["API_URL"]),
+            params={}
         )
-        assert retry_res.status_code == 200
+        # Even though query is bad, a 400 will confirm that the token is valid
+        assert retry_res.status_code == 400
         return True
     else:
         assert res.status_code == 200
